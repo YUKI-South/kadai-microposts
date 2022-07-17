@@ -23,5 +23,49 @@ class UsersController extends Controller
         //ユーザ詳細ビューでそれを表示
         return view('users.show', ['user' => $user,]);
     }
+    
+    /**
+     * ユーザのフォロー一覧ページを表示するアクション。
+     *
+     * @param  $id  ユーザのid
+     * @return \Illuminate\Http\Response
+     */
+     public function followings($id)
+     {
+         //idの値でユーザを検索して取得
+         $user = User::findOrFail($id);
+         
+         //関係するモデルの件数を取得
+         $user->loadRelationshipCounts();
+         
+         //ユーザのフォロー一覧を取得
+         $followings = $user->followings()->paginate(10);
+         
+         //フォロー一覧をビューでそれらを表示
+         return view('users.followings', [
+                'user' => $user,
+                'users' => $followings,
+             ]);
+     }
+     
+     /**
+     * ユーザのフォロワー一覧ページを表示するアクション。
+     *
+     * @param  $id  ユーザのid
+     * @return \Illuminate\Http\Response
+     */
+     public function followers($id)
+     {
+        $user = User::findOrFail($id);
+        
+        $user->loadRelationshipCounts();
+        
+        $followers = $user->followers()->paginate(10);
+        
+        return view('users.followers',[
+                'user' => $user,
+                'users' => $followers,
+            ]);
+     }
 }
 
